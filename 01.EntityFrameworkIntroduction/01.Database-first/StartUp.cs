@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SoftUni
 {
-    internal class StartUp
+    public class StartUp
     {
         static void Main(string[] args)
         {
@@ -17,12 +17,22 @@ namespace SoftUni
 
         public static string GetEmployeesFullInformation(SoftUniContext context)
         {
+            var employees = context.Employees.Select(x => new
+            {
+                x.EmployeeId,
+                x.FirstName,
+                x.MiddleName,
+                x.LastName,
+                x.JobTitle,
+                x.Salary
+
+            }).OrderBy(x => x.EmployeeId).ToList();
+
             StringBuilder sb = new StringBuilder();
 
-            Employee[] employees = context.Employees.OrderBy(x => x.EmployeeId).ToArray();
-            foreach (var em in employees)
-                sb.AppendLine($"{em.FirstName} {em.MiddleName} {em.LastName} {em.JobTitle} {em.Salary:f2}");
-
+            foreach (var employee in employees)
+                sb.AppendLine($"{employee.FirstName} {employee.LastName} {employee.MiddleName} {employee.JobTitle} {employee.Salary:f2}");
+            
             return sb.ToString().TrimEnd();
 
         }
