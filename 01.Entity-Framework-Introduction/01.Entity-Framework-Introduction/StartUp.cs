@@ -20,6 +20,7 @@ namespace SoftUni
             Console.WriteLine(AddNewAddressToEmployee(dbContext));
         }
 
+        //03. Employees full information
         public static string GetEmployeesFullInformation(SoftUniContext context)
         {
             var employees = context.Employees.Select(x => new
@@ -41,6 +42,7 @@ namespace SoftUni
             return sb.ToString().TrimEnd();
         }
 
+        //04. Employees with salary over 50 000
         public static string GetEmployeesWithSalaryOver50000(SoftUniContext context)
         {
             var employees = context.Employees.Select(x => new
@@ -60,6 +62,7 @@ namespace SoftUni
             return sb.ToString().TrimEnd();
         }
 
+        //05. Employees from research and development
         public static string GetEmployeesFromResearchAndDevelopment(SoftUniContext context)
         {
             var employees = context.Employees
@@ -78,6 +81,7 @@ namespace SoftUni
             return sb.ToString().TrimEnd();
         }
 
+        //06. Adding a new address and updating employee
         public static string AddNewAddressToEmployee(SoftUniContext context)
         {
             Address newAddress = new Address() { AddressText = "Vitoshka 15", TownId = 4 };
