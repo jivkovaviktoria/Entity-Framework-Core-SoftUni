@@ -18,7 +18,8 @@ namespace SoftUni
             // Console.WriteLine(GetEmployeesFromResearchAndDevelopment(dbContext));
             // Console.WriteLine(AddNewAddressToEmployee(dbContext));
             // Console.WriteLine(AddNewAddressToEmployee(dbContext));
-            Console.WriteLine(GetEmployeesInPeriod(dbContext));
+            // Console.WriteLine(GetEmployeesInPeriod(dbContext));
+            Console.WriteLine(GetAddressesByTown(dbContext));
         }
 
         //03. Employees full information
@@ -125,6 +126,22 @@ namespace SoftUni
                 foreach (var p in em.Projects)
                     sb.AppendLine($"--{p.Name} - {p.StartDate} - {p.EndDate}");
             }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //08. Addresses by town
+        public static string GetAddressesByTown(SoftUniContext context)
+        {
+            var addresses = context.Addresses
+                .Select(x => new { Address = x.AddressText, Town = x.Town.Name, Employees = x.Employees.Count })
+                .OrderByDescending(x => x.Employees).ThenBy(x => x.Town).ThenBy(x => x.Address)
+                .Take(10).ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var ad in addresses)
+                sb.AppendLine($"{ad.Address}, {ad.Town} - {ad.Employees} employees");
 
             return sb.ToString().TrimEnd();
         }
