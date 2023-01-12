@@ -6,4 +6,31 @@
     <RootNamespace>_01.Entity_Framework_Introduction</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include=".vs\VSWorkspaceState.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".vs\01.Database-first\FileContentIndex\22d43566-3330-4e16-abc9-a13a9d7e3103.vsidx" />
+    <None Include=".vs\01.Database-first\FileContentIndex\794ec676-8993-4484-a380-4a768f0cf334.vsidx" />
+    <None Include=".vs\01.Database-first\FileContentIndex\a620dc50-597f-413d-a2dc-c5bcce9f3258.vsidx" />
+    <None Include=".vs\01.Database-first\FileContentIndex\read.lock" />
+    <None Include=".vs\slnx.sqlite" />
+    <None Include="SoftUni.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include=".vs\01.Database-first\FileContentIndex\merges\" />
+    <Folder Include=".vs\01.Database-first\v17\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.32">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.32" />
+  </ItemGroup>
+
 </Project>
