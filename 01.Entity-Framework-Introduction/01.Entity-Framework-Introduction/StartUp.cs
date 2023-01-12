@@ -17,7 +17,8 @@ namespace SoftUni
             // Console.WriteLine(GetEmployeesWithSalaryOver50000(dbContext));
             // Console.WriteLine(GetEmployeesFromResearchAndDevelopment(dbContext));
             // Console.WriteLine(AddNewAddressToEmployee(dbContext));
-            Console.WriteLine(AddNewAddressToEmployee(dbContext));
+            // Console.WriteLine(AddNewAddressToEmployee(dbContext));
+            Console.WriteLine(GetEmployeesInPeriod(dbContext));
         }
 
         //03. Employees full information
@@ -97,6 +98,33 @@ namespace SoftUni
 
             StringBuilder sb = new StringBuilder();
             foreach (var ad in addressText) sb.AppendLine(ad);
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //07. Employees and projects
+        public static string GetEmployeesInPeriod(SoftUniContext context)
+        {
+            var employees = context.Employees
+                .Where(x => x.EmployeesProjects.Any(p =>
+                    p.Project.StartDate.Year >= 2001 && p.Project.StartDate.Year <= 2003))
+                .Take(10)
+                .Select(x => new { x.FirstName, x.LastName, x.Manager, Projects = x.EmployeesProjects.Select(p => new
+                {
+                    p.Project.Name,
+                    StartDate = p.Project.StartDate.ToString("M/d/yyyy h:mm:ss tt"),
+                    EndDate = p.Project.EndDate.HasValue ? p.Project.EndDate.Value.ToString("M/d/yyyy h:mm:ss tt") : "not finished"
+                })})
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var em in employees)
+            {
+                sb.AppendLine($"{em.FirstName} {em.LastName} - Manager: {em.Manager.FirstName} {em.Manager.LastName}");
+                foreach (var p in em.Projects)
+                    sb.AppendLine($"--{p.Name} - {p.StartDate} - {p.EndDate}");
+            }
 
             return sb.ToString().TrimEnd();
         }
