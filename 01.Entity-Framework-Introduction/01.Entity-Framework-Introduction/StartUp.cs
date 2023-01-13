@@ -27,7 +27,8 @@ namespace SoftUni
             // Console.WriteLine(GetLatestProjects(dbContext));
             // Console.WriteLine(IncreaseSalaries(dbContext));
             // Console.WriteLine(GetEmployeesByFirstNameStartingWithSa(dbContext));
-            Console.WriteLine(DeleteProjectById(dbContext));
+            // Console.WriteLine(DeleteProjectById(dbContext));
+            Console.WriteLine(RemoveTown(dbContext));
         }
 
         //03. Employees full information
@@ -296,5 +297,24 @@ namespace SoftUni
             return sb.ToString().TrimEnd();
         }
 
+        //15. Remove Town
+        public static string RemoveTown(SoftUniContext context)
+        {
+            var townToRemove = context.Towns.FirstOrDefault(t => t.Name == "Seattle");
+            var addresses = context.Addresses.Where(a => a.TownId == townToRemove.TownId);
+
+            var count = addresses.Count();
+
+            var employees = context.Employees.Where(e => addresses.Any(a=>a.AddressId == e.AddressId));
+
+            foreach (var employee in employees) employee.AddressId = null;
+            foreach (var address in addresses) context.Addresses.Remove(address);
+            
+            context.Towns.Remove(townToRemove);
+            
+            context.SaveChanges();
+
+            return $"{count} addresses in Seattle were deleted";
+        }
     }
 }
