@@ -1,6 +1,7 @@
 ﻿using SoftUni.Data;
 using SoftUni.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,8 @@ namespace SoftUni
             // Console.WriteLine(GetAddressesByTown(dbContext));
             // Console.WriteLine(GetEmployee147(dbContext));
             // Console.WriteLine(GetDepartmentsWithMoreThan5Employees(dbContext));
-            Console.WriteLine(GetLatestProjects(dbContext));
+            // Console.WriteLine(GetLatestProjects(dbContext));
+            Console.WriteLine(IncreaseSalaries(dbContext));
         }
 
         //03. Employees full information
@@ -216,6 +218,32 @@ namespace SoftUni
                 sb.AppendLine(p.Description);
                 sb.AppendLine(p.StartDate);
             }
+
+            return sb.ToString().TrimEnd();
+
+        }
+
+        //12. Increase Salaries
+        public static string IncreaseSalaries(SoftUniContext context)
+        {
+            HashSet<string> departments = new HashSet<string>()
+                { "Engineering", "Tool Design", "Marketing", "Information Services" };
+
+            var employees = context.Employees
+                .Where(x => departments.Contains(x.Department.Name))
+                .OrderBy(x => x.FirstName)
+                .ThenBy(x => x.LastName)
+                .ToArray();
+
+            foreach (var emp in employees)
+                emp.Salary *= 1.12m;
+            
+            context.SaveChanges();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var em in employees)
+                sb.AppendLine($"{em.FirstName} {em.LastName} (${em.Salary:f2})");
 
             return sb.ToString().TrimEnd();
 
