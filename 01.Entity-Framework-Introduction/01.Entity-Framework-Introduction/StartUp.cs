@@ -22,7 +22,8 @@ namespace SoftUni
             // Console.WriteLine(GetEmployeesInPeriod(dbContext));
             // Console.WriteLine(GetAddressesByTown(dbContext));
             // Console.WriteLine(GetEmployee147(dbContext));
-            Console.WriteLine(GetDepartmentsWithMoreThan5Employees(dbContext));
+            // Console.WriteLine(GetDepartmentsWithMoreThan5Employees(dbContext));
+            Console.WriteLine(GetLatestProjects(dbContext));
         }
 
         //03. Employees full information
@@ -190,6 +191,34 @@ namespace SoftUni
             }
 
             return sb.ToString().TrimEnd();
+        }
+        
+        //11. Find Latest 10 Projects
+        public static string GetLatestProjects(SoftUniContext context)
+        {
+            var projects = context.Projects
+                .OrderByDescending(x => x.StartDate)
+                .Take(10)
+                .OrderBy(x => x.Name)
+                .Select(x => new
+                {
+                    Name = x.Name,
+                    Description = x.Description,
+                    StartDate = x.StartDate.ToString("M/d/yyyy h:mm:ss tt")
+                })
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var p in projects)
+            {
+                sb.AppendLine(p.Name);
+                sb.AppendLine(p.Description);
+                sb.AppendLine(p.StartDate);
+            }
+
+            return sb.ToString().TrimEnd();
+
         }
     }
 }
