@@ -26,7 +26,8 @@ namespace SoftUni
             // Console.WriteLine(GetDepartmentsWithMoreThan5Employees(dbContext));
             // Console.WriteLine(GetLatestProjects(dbContext));
             // Console.WriteLine(IncreaseSalaries(dbContext));
-            Console.WriteLine(GetEmployeesByFirstNameStartingWithSa(dbContext));
+            // Console.WriteLine(GetEmployeesByFirstNameStartingWithSa(dbContext));
+            Console.WriteLine(DeleteProjectById(dbContext));
         }
 
         //03. Employees full information
@@ -270,5 +271,30 @@ namespace SoftUni
 
             return sb.ToString().TrimEnd();
         }
+        
+        //14. Delete Project by Id
+        public static string DeleteProjectById(SoftUniContext context)
+        {
+            var projectToDelete = context.Projects.First(x => x.ProjectId == 2);
+            
+            var empProjectsToDelete = context.EmployeesProjects
+                .Where(ep => ep.ProjectId == 2)
+                .ToArray();
+
+            foreach (var empProject in empProjectsToDelete)
+                context.EmployeesProjects.Remove(empProject);
+            
+            context.Projects.Remove(projectToDelete);
+            
+            context.SaveChanges();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var p in context.Projects.Take(10))
+                sb.AppendLine(p.Name);
+
+            return sb.ToString().TrimEnd();
+        }
+
     }
 }
