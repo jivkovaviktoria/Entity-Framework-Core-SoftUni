@@ -15,9 +15,10 @@ namespace BookShop
             using var db = new BookShopContext();
             DbInitializer.ResetDatabase(db);
 
-            //var command = Console.ReadLine();
-            //Console.WriteLine(GetBooksByAgeRestriction(db, command));
-            Console.WriteLine(GetGoldenBooks(db));
+            // var command = Console.ReadLine();
+            // Console.WriteLine(GetBooksByAgeRestriction(db, command));
+            // Console.WriteLine(GetGoldenBooks(db));
+            Console.WriteLine(GetBooksByPrice(db));
         }
         
         // 2. Age Restriction
@@ -54,6 +55,23 @@ namespace BookShop
 
             foreach (var b in books)
                 sb.AppendLine(b);
+
+            return sb.ToString().TrimEnd();
+        }
+
+        // 4. Books by Price
+        public static string GetBooksByPrice(BookShopContext context)
+        {
+            var books = context.Books
+                .Where(b => b.Price > 40)
+                .Select(b => new { Title = b.Title, Price = b.Price })
+                .OrderByDescending(b => b.Price)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var b in books)
+                sb.AppendLine($"{b.Title} - ${b.Price:f2}");
 
             return sb.ToString().TrimEnd();
         }
