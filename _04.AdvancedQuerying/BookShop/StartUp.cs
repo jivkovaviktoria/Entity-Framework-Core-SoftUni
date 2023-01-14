@@ -50,7 +50,9 @@ namespace BookShop
 
             //Console.WriteLine(GetTotalProfitByCategory(db));
 
-            Console.WriteLine(GetMostRecentBooks(db));
+            //Console.WriteLine(GetMostRecentBooks(db));
+            
+            IncreasePrices(db);
         }
         
         // 2. Age Restriction
@@ -291,6 +293,17 @@ namespace BookShop
             }
 
             return sb.ToString().TrimEnd();
+        }
+        
+        //15. Increase Prices
+        public static void IncreasePrices(BookShopContext context)
+        {
+            foreach (var b in context.Books.Where(b => b.ReleaseDate.HasValue && b.ReleaseDate.Value.Year < 2010))
+            {
+                b.Price += 5;
+            }
+
+            context.SaveChanges();
         }
     }
 }
