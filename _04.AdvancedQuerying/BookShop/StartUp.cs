@@ -40,8 +40,11 @@ namespace BookShop
             // var input = Console.ReadLine();
             // Console.WriteLine(GetBookTitlesContaining(db, input));
 
-            var sufix = Console.ReadLine();
-            Console.WriteLine(GetBooksByAuthor(db, sufix));
+            // var sufix = Console.ReadLine();
+            // Console.WriteLine(GetBooksByAuthor(db, sufix));
+
+            var length = int.Parse(Console.ReadLine());
+            Console.WriteLine(CountBooks(db, length));
         }
         
         // 2. Age Restriction
@@ -214,5 +217,10 @@ namespace BookShop
 
             return sb.ToString().TrimEnd();
         }
+        
+        // 11. Count Books
+        public static int CountBooks(BookShopContext context, int lengthCheck)
+           => context.Books.Count(b => b.Title.Length > lengthCheck);
+        
     }
 }
