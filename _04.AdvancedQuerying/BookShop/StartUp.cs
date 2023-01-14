@@ -222,5 +222,26 @@ namespace BookShop
         public static int CountBooks(BookShopContext context, int lengthCheck)
            => context.Books.Count(b => b.Title.Length > lengthCheck);
         
+        // 12. Total Book Copies
+        public static string CountCopiesByAuthor(BookShopContext context)
+        {
+            var authors = context.Authors
+                .Select(a => new
+                {
+                    Name = a.FirstName + " " + a.LastName,
+                    CopiesCount = a.Books.Sum(b => b.Copies)
+                })
+                .OrderByDescending(a => a.CopiesCount)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var a in authors)
+                sb.AppendLine($"{a.Name} - {a.CopiesCount}");
+
+            return sb.ToString().TrimEnd();
+
+        }
+        
     }
 }
