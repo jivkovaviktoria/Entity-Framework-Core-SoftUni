@@ -48,7 +48,9 @@ namespace BookShop
 
             // Console.WriteLine(CountCopiesByAuthor(db));
 
-            Console.WriteLine(GetTotalProfitByCategory(db));
+            //Console.WriteLine(GetTotalProfitByCategory(db));
+
+            Console.WriteLine(GetMostRecentBooks(db));
         }
         
         // 2. Age Restriction
@@ -263,6 +265,30 @@ namespace BookShop
 
             foreach (var c in categories)
                 sb.AppendLine($"{c.Name} ${c.Profit}");
+
+            return sb.ToString().TrimEnd();
+        }
+        
+        // 14. Most recent Books
+        public static string GetMostRecentBooks(BookShopContext context)
+        {
+            var categories = context.Categories
+                .Select(c => new
+                {
+                    Name = c.Name,
+                    Books = c.CategoryBooks.Select(cb => cb.Book).ToArray()
+                })
+                .OrderBy(c => c.Name)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+            
+            foreach (var c in categories)
+            {
+                sb.AppendLine($"--{c.Name}");
+                foreach (var b in c.Books.OrderByDescending(b => b.ReleaseDate).Take(3))
+                    sb.AppendLine($"{b.Title} ({b.ReleaseDate.Value.Year})");
+            }
 
             return sb.ToString().TrimEnd();
         }
