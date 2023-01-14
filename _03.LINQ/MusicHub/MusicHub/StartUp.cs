@@ -14,7 +14,8 @@ namespace MusicHub
             MusicHubDbContext context = new MusicHubDbContext();
             DbInitializer.ResetDatabase(context);
 
-            Console.WriteLine(ExportAlbumsInfo(context, 9));
+           // Console.WriteLine(ExportAlbumsInfo(context, 9));
+           Console.WriteLine(ExportSongsAboveDuration(context, 4));
         }
 
         // 2. All Albums Produced By Given Producer
@@ -60,6 +61,42 @@ namespace MusicHub
                 }
 
                 sb.AppendLine($"-AlbumPrice: {album.AlbumPrice:f2}");
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+        
+        // 3. 3.Songs Above Given Duration
+        public static string ExportSongsAboveDuration(MusicHubDbContext context, int duration)
+        {
+            var songs = context.Songs
+                .Where(s => s.Duration.TotalSeconds > duration)
+                .Select(s => new
+                {
+                    Name = s.Name,
+
+                    PerformerFullName = s.SongPerformers.Select(p => p.Performer.FirstName + " " + p.Performer.LastName).FirstOrDefault(),
+
+                    WriterName = s.Writer.Name,
+                    AlbumProducer = s.Album.Producer.Name,
+                    Duration = s.Duration
+                })
+                .OrderBy(x => x.Name)
+                .ThenBy(x => x.WriterName)
+                .ThenBy(x => x.PerformerFullName)
+                .ToList();
+
+            var sb = new StringBuilder();
+            int counter = 1;
+
+            foreach (var song in songs)
+            {
+                sb.AppendLine($"-Song #{counter++}");
+                sb.AppendLine($"---SongName: {song.Name}");
+                sb.AppendLine($"---Writer: {song.WriterName}");
+                sb.AppendLine($"---Performer: {song.PerformerFullName}");
+                sb.AppendLine($"---AlbumProducer: {song.AlbumProducer}");
+                sb.AppendLine($"---Duration: {song.Duration.ToString("c")}");
             }
 
             return sb.ToString().TrimEnd();

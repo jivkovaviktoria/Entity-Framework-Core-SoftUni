@@ -7,6 +7,10 @@ namespace MusicHub.Data.Models
 {
     public class Song
     {
+        public Song()
+        {
+            this.SongPerformers = new HashSet<SongPerformer>();
+        }
         public int Id { get; set; }
         public string Name { get; set; }
         public TimeSpan Duration { get; set; }
