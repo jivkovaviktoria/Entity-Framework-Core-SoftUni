@@ -43,8 +43,12 @@ namespace BookShop
             // var sufix = Console.ReadLine();
             // Console.WriteLine(GetBooksByAuthor(db, sufix));
 
-            var length = int.Parse(Console.ReadLine());
-            Console.WriteLine(CountBooks(db, length));
+            //var length = int.Parse(Console.ReadLine());
+            // Console.WriteLine(CountBooks(db, length));
+
+            // Console.WriteLine(CountCopiesByAuthor(db));
+
+            Console.WriteLine(GetTotalProfitByCategory(db));
         }
         
         // 2. Age Restriction
@@ -240,8 +244,27 @@ namespace BookShop
                 sb.AppendLine($"{a.Name} - {a.CopiesCount}");
 
             return sb.ToString().TrimEnd();
-
         }
-        
+
+        // 13. Profit by Category
+        public static string GetTotalProfitByCategory(BookShopContext context)
+        {
+            var categories = context.Categories
+                .Select(c => new
+                {
+                    Name = c.Name,
+                    Profit = c.CategoryBooks.Sum(x => x.Book.Copies * x.Book.Price)
+                })
+                .OrderByDescending(c => c.Profit)
+                .ThenBy(c => c.Name)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var c in categories)
+                sb.AppendLine($"{c.Name} ${c.Profit}");
+
+            return sb.ToString().TrimEnd();
+        }
     }
 }
