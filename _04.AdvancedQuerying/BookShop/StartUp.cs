@@ -43,16 +43,18 @@ namespace BookShop
             // var sufix = Console.ReadLine();
             // Console.WriteLine(GetBooksByAuthor(db, sufix));
 
-            //var length = int.Parse(Console.ReadLine());
+            // var length = int.Parse(Console.ReadLine());
             // Console.WriteLine(CountBooks(db, length));
 
             // Console.WriteLine(CountCopiesByAuthor(db));
 
-            //Console.WriteLine(GetTotalProfitByCategory(db));
+            // Console.WriteLine(GetTotalProfitByCategory(db));
 
-            //Console.WriteLine(GetMostRecentBooks(db));
+            // Console.WriteLine(GetMostRecentBooks(db));
             
-            IncreasePrices(db);
+            // IncreasePrices(db);
+
+            Console.WriteLine(RemoveBooks(db));
         }
         
         // 2. Age Restriction
@@ -304,6 +306,18 @@ namespace BookShop
             }
 
             context.SaveChanges();
+        }
+
+        // 16. Remove Books
+        public static int RemoveBooks(BookShopContext context)
+        {
+            var booksToRemove = context.Books.Where(b => b.Copies < 4200).ToArray();
+            var count = booksToRemove.Length;
+
+            foreach (var b in booksToRemove) context.Books.Remove(b);
+            context.SaveChanges();
+
+            return count;
         }
     }
 }
