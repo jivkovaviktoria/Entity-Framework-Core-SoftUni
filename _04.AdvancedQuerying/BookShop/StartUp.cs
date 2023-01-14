@@ -28,11 +28,14 @@ namespace BookShop
             // var year = int.Parse(Console.ReadLine());
             // Console.WriteLine(GetBooksNotReleasedIn(db, year));
 
-            //var input = Console.ReadLine();
-            //Console.WriteLine(GetBooksByCategory(db, input));
+            // var input = Console.ReadLine();
+            // Console.WriteLine(GetBooksByCategory(db, input));
 
-            var date = Console.ReadLine();
-            Console.WriteLine(GetBooksReleasedBefore(db, date));
+            // var date = Console.ReadLine();
+            // Console.WriteLine(GetBooksReleasedBefore(db, date));
+
+            var sufix = Console.ReadLine();
+            Console.WriteLine(GetAuthorNamesEndingIn(db, sufix));
         }
         
         // 2. Age Restriction
@@ -147,6 +150,23 @@ namespace BookShop
 
             foreach (var b in books)
                 sb.AppendLine($"{b.Title} - {b.Edinition} - ${b.Price:f2}");
+
+            return sb.ToString().TrimEnd();
+        }
+
+        // 8. Author Search
+        public static string GetAuthorNamesEndingIn(BookShopContext context, string input)
+        {
+            var authors = context.Authors
+                .Where(a => a.FirstName.EndsWith(input))
+                .Select(a => new { FullName = a.FirstName + " " + a.LastName })
+                .OrderBy(a => a.FullName)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var a in authors)
+                sb.AppendLine(a.FullName);
 
             return sb.ToString().TrimEnd();
         }
