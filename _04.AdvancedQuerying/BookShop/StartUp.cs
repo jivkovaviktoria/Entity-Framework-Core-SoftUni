@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BookShop.Models;
 using BookShop.Models.Enums;
 
 namespace BookShop
@@ -17,11 +19,16 @@ namespace BookShop
 
             // var command = Console.ReadLine();
             // Console.WriteLine(GetBooksByAgeRestriction(db, command));
+            
             // Console.WriteLine(GetGoldenBooks(db));
+            
             // Console.WriteLine(GetBooksByPrice(db));
 
-            var year = int.Parse(Console.ReadLine());
-            Console.WriteLine(GetBooksNotReleasedIn(db, year));
+            // var year = int.Parse(Console.ReadLine());
+            // Console.WriteLine(GetBooksNotReleasedIn(db, year));
+
+            var input = Console.ReadLine();
+            Console.WriteLine(GetBooksByCategory(db, input));
         }
         
         // 2. Age Restriction
@@ -85,6 +92,25 @@ namespace BookShop
             var books = context.Books
                 .Where(b => b.ReleaseDate.HasValue && b.ReleaseDate.Value.Year != year)
                 .OrderBy(b => b.BookId)
+                .Select(b => b.Title)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var b in books)
+                sb.AppendLine(b);
+
+            return sb.ToString().TrimEnd();
+        }
+        
+        // 6. Book Titles by Category
+        public static string GetBooksByCategory(BookShopContext context, string input)
+        {
+            HashSet<string> categories = new HashSet<string>(input.Split(), StringComparer.OrdinalIgnoreCase);
+
+            var books = context.Books
+                .Where(b => b.BookCategories.Any(bc => categories.Contains(bc.Category.Name)))
+                .OrderBy(b => b.Title)
                 .Select(b => b.Title)
                 .ToArray();
 
