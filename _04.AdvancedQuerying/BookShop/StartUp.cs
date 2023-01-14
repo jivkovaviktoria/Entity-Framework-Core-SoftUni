@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using BookShop.Models;
@@ -27,8 +28,11 @@ namespace BookShop
             // var year = int.Parse(Console.ReadLine());
             // Console.WriteLine(GetBooksNotReleasedIn(db, year));
 
-            var input = Console.ReadLine();
-            Console.WriteLine(GetBooksByCategory(db, input));
+            //var input = Console.ReadLine();
+            //Console.WriteLine(GetBooksByCategory(db, input));
+
+            var date = Console.ReadLine();
+            Console.WriteLine(GetBooksReleasedBefore(db, date));
         }
         
         // 2. Age Restriction
@@ -118,6 +122,31 @@ namespace BookShop
 
             foreach (var b in books)
                 sb.AppendLine(b);
+
+            return sb.ToString().TrimEnd();
+        }
+        
+        // 7. Released before Date
+        public static string GetBooksReleasedBefore(BookShopContext context, string date)
+        {
+            var targetDate = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            var books = context.Books
+                .Where(b => b.ReleaseDate.HasValue && b.ReleaseDate.Value < targetDate)
+                .Select(b => new
+                {
+                    Title = b.Title,
+                    Edinition = b.EditionType,
+                    Price = b.Price,
+                    ReleaseDate = b.ReleaseDate
+                })
+                .OrderByDescending(b => b.ReleaseDate)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var b in books)
+                sb.AppendLine($"{b.Title} - {b.Edinition} - ${b.Price:f2}");
 
             return sb.ToString().TrimEnd();
         }
