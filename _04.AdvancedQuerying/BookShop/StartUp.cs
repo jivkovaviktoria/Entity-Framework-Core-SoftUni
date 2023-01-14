@@ -18,7 +18,10 @@ namespace BookShop
             // var command = Console.ReadLine();
             // Console.WriteLine(GetBooksByAgeRestriction(db, command));
             // Console.WriteLine(GetGoldenBooks(db));
-            Console.WriteLine(GetBooksByPrice(db));
+            // Console.WriteLine(GetBooksByPrice(db));
+
+            var year = int.Parse(Console.ReadLine());
+            Console.WriteLine(GetBooksNotReleasedIn(db, year));
         }
         
         // 2. Age Restriction
@@ -72,6 +75,23 @@ namespace BookShop
 
             foreach (var b in books)
                 sb.AppendLine($"{b.Title} - ${b.Price:f2}");
+
+            return sb.ToString().TrimEnd();
+        }
+
+        // 5. Not Released In
+        public static string GetBooksNotReleasedIn(BookShopContext context, int year)
+        {
+            var books = context.Books
+                .Where(b => b.ReleaseDate.HasValue && b.ReleaseDate.Value.Year != year)
+                .OrderBy(b => b.BookId)
+                .Select(b => b.Title)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var b in books)
+                sb.AppendLine(b);
 
             return sb.ToString().TrimEnd();
         }
