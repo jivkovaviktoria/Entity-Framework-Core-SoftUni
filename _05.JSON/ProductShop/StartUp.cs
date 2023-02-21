@@ -18,10 +18,16 @@ namespace ProductShop
             Mapper.Initialize(cfg => { cfg.AddProfile<ProductShopProfile>(); });
             
             //01. Import Users
-            string inputJson = File.ReadAllText("../../../Datasets/users.json");
-            Console.WriteLine(ImportUsers(db, inputJson));
+            // string inputJson = File.ReadAllText("../../../Datasets/users.json");
+            // console.WriteLine(ImportUsers(db, inputJson));
+            
+            //02. Import Products
+            string inputJson = File.ReadAllText("../../../Datasets/products.json");
+            Console.WriteLine(ImportProducts(db, inputJson));
+            
         }
         
+        // 01. ImportUsers
         public static string ImportUsers(ProductShopContext context, string inputJson)
         {
             var serializerSettings = new JsonSerializerSettings()
@@ -41,5 +47,19 @@ namespace ProductShop
 
             return $"Successfully imported {users.Count}";
         }
+        
+        // 02. Import Products
+
+        public static string ImportProducts(ProductShopContext context, string inputJson)
+        {
+            var productsDtos = JsonConvert.DeserializeObject<IEnumerable<ProductInputModel>>(inputJson);
+            var products = Mapper.Map<IEnumerable<Product>>(productsDtos);
+            context.Products.AddRange(products);
+            context.SaveChanges();
+            
+            return $"Successfully imported {products.Count()}";
+        }
+        
+        
     }
 }
