@@ -42,9 +42,13 @@ namespace ProductShop
             //var result = GetSoldProducts(db);
             //File.WriteAllText("../../../Datasets/users-sold-products.json", result);
             
-            //07. Export Users and Products
-            var result = GetUsersWithProducts(db);
-            File.WriteAllText("../../../Datasets/users-and-products.json", result);
+            //07. Export Cateogires by Products Count
+            var result = GetCategoriesByProductsCount(db);
+            File.WriteAllText("../../../Datasets/categories-by-products.json", result);
+
+            //08. Export Users and Products
+            // var result = GetUsersWithProducts(db);
+            // File.WriteAllText("../../../Datasets/users-and-products.json", result);
         }
         
         // 01. ImportUsers
@@ -152,6 +156,24 @@ namespace ProductShop
             var result = JsonConvert.SerializeObject(users, Formatting.Indented);
             return result;
         }
+
+        // 07. Export Categories by Products Count
+        public static string GetCategoriesByProductsCount(ProductShopContext context)
+        {
+            var categories = context.Categories
+                .Select(x => new
+                {
+                    category = x.Name,
+                    productsCount = x.CategoryProducts.Count(),
+                    averagePrice = x.CategoryProducts.Average(p => p.Product.Price).ToString("f2"),
+                    totalRevenue = x.CategoryProducts.Sum(p => p.Product.Price).ToString("f2")
+                })
+                .OrderByDescending(x => x.productsCount)
+                .ToList();
+
+            var result = JsonConvert.SerializeObject(categories, Formatting.Indented);
+            return result;
+        }
         
         // 08. Export Users and Products
         public static string GetUsersWithProducts(ProductShopContext context)
@@ -195,5 +217,7 @@ namespace ProductShop
 
             return resultJson;
         }
+        
+        
     }
 }
