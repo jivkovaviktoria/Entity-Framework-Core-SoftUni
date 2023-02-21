@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ProductShop.Data;
 using ProductShop.InputModels;
 using ProductShop.Models;
@@ -34,8 +35,12 @@ namespace ProductShop
             // Console.WriteLine(ImportCategoryProducts(db, inputJson));
             
             //05. Export Products in Range
-            var result = GetProductsInRange(db);
-            File.WriteAllText("../../../Datasets/products-in-range.json", result);
+            // var result = GetProductsInRange(db);
+            // File.WriteAllText("../../../Datasets/products-in-range.json", result);
+            
+            //06. Export Successfully Solg Products
+            var result = GetSoldProducts(db);
+            File.WriteAllText("../../../Datasets/users-sold-products.json", result);
         }
         
         // 01. ImportUsers
@@ -115,6 +120,32 @@ namespace ProductShop
                 .ToList();
 
             var result = JsonConvert.SerializeObject(products, Formatting.Indented);
+            return result;
+        }
+        
+        // 06. Export Successfully Sold Products
+        public static string GetSoldProducts(ProductShopContext context)
+        {
+            var users = context.Users
+                .Where(x => x.ProductsSold.Any(p => p.Buyer != null))
+                .Select(x => new
+                {
+                    firstName = x.FirstName,
+                    lastName = x.LastName,
+                    soldProducts = x.ProductsSold.Where(p => p.BuyerId != null).Select(a => new
+                        {
+                            name = a.Name,
+                            price = a.Price,
+                            buyerFirstName = a.Buyer.FirstName,
+                            buyerLastName = a.Buyer.LastName
+                        })
+                        .ToList()
+                })
+                .OrderBy(x => x.lastName)
+                .ThenBy(x => x.lastName)
+                .ToList();
+
+            var result = JsonConvert.SerializeObject(users, Formatting.Indented);
             return result;
         }
     }
