@@ -39,8 +39,12 @@ namespace ProductShop
             // File.WriteAllText("../../../Datasets/products-in-range.json", result);
             
             //06. Export Successfully Solg Products
-            var result = GetSoldProducts(db);
-            File.WriteAllText("../../../Datasets/users-sold-products.json", result);
+            //var result = GetSoldProducts(db);
+            //File.WriteAllText("../../../Datasets/users-sold-products.json", result);
+            
+            //07. Export Users and Products
+            var result = GetUsersWithProducts(db);
+            File.WriteAllText("../../../Datasets/users-and-products.json", result);
         }
         
         // 01. ImportUsers
@@ -147,6 +151,49 @@ namespace ProductShop
 
             var result = JsonConvert.SerializeObject(users, Formatting.Indented);
             return result;
+        }
+        
+        // 08. Export Users and Products
+        public static string GetUsersWithProducts(ProductShopContext context)
+        {
+            var users = context.Users
+                .Include(x=>x.ProductsSold)
+                .ToList()
+                .Where(x => x.ProductsSold.Any(b=>b.BuyerId !=null))
+                .Select(x => new
+                {
+                    firstName = x.FirstName,
+                    lastName = x.LastName,
+                    age = x.Age,
+                    soldProducts = new
+                    {
+                        count = x.ProductsSold.Where(b => b.BuyerId != null).Count(),
+                        products = x.ProductsSold.Where(b=>b.BuyerId != null).Select(p => new
+                            {
+                                name = p.Name,
+                                price = p.Price
+                            })
+                            .ToList()
+                    }
+                })
+                .ToList()
+                .OrderByDescending(x => x.soldProducts.products.Count())
+                .ToList();
+
+            var resultObject = new
+            {
+                usersCount = users.Count(),
+                users = users
+            };
+
+            var jsonSerializingOptions = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            var resultJson = JsonConvert.SerializeObject(resultObject, Formatting.Indented, jsonSerializingOptions);
+
+            return resultJson;
         }
     }
 }
